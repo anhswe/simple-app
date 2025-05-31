@@ -36,7 +36,7 @@ jobs:
       - name: Get current Task Definition
         id: get-task-def
         env:
-          ECS_TASK_DEFINITION: ${{ vars.ECS_TASK_DEFINITION }} # Define this variable
+          ECS_TASK_DEFINITION: ${{ vars.ECS_TASK_DEFINITION }}
         run: |
           set -e
           echo "Retrieving Task Definition: $ECS_TASK_DEFINITION"
@@ -45,6 +45,11 @@ jobs:
             echo "Error: Failed to create task-definition.json or file is empty"
             exit 1
           fi
+          echo "Original Task Definition:"
+          cat task-definition.json
+          # Remove enableFaultInjection key if it exists
+          jq 'del(.enableFaultInjection)' task-definition.json > temp.json && mv temp.json task-definition.json
+          echo "Updated Task Definition (after removing enableFaultInjection):"
           cat task-definition.json
 
       - name: Update Task Definition with new image

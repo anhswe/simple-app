@@ -83,7 +83,7 @@ CMD ["node", "server.js"]
 ```
 
 📄 ECS Task Definition (taskdef.json)
-{
+```{
   "family": "simple-app",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
@@ -109,7 +109,8 @@ CMD ["node", "server.js"]
       ]
     }
   ]
-}
+}```
+
 ⚙️ GitHub Actions Workflows
 .github/workflows/deploy-staging.yml
 name: Deploy to Staging

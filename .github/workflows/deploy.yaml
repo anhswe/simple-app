@@ -33,6 +33,16 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
+      - name: Get current Task Definition
+        id: get-task-def
+        run: |
+          aws ecs describe-task-definition \
+          --task-definition ${{ env.ECS_TASK_DEFINITION }} \
+          --region ${{ env.AWS_REGION }} \
+          --query taskDefinition \
+          > task-definition.json
+          echo "Retrieved Task Definition for ${{ env.ECS_TASK_DEFINITION }}"
+
       - name: Update Task Definition with new image
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1

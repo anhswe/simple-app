@@ -33,14 +33,33 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Update ECS Task Definition
+      - name: Update Task Definition with new image
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ vars.CONTAINER_NAME }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ github.ref_name }}
+          environment-variables: |
+            ENVIRONMENT=${{ vars.ENVIRONMENT }}
+            PORT=8080
+            IMAGE_TAG=${{ github.ref_name }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ vars.ECS_SERVICE }}
+          cluster: ${{ vars.ECS_CLUSTER }}
+          wait-for-service-stability: true
+
+      - name: Verify deployed image
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
-          IMAGE_TAG: ${{ github.ref_name }} # Sử dụng tên tag (e.g., v1.0.0)
+          IMAGE_TAG: ${{ github.ref_name }}
         run: |
-          aws ecs update-service \
-            --cluster ${{ vars.ECS_CLUSTER }} \
-            --service ${{ vars.ECS_SERVICE }} \
-            --task-definition ${{ vars.ECS_TASK_DEFINITION }} \
-            --force-new-deployment
+          TASK_ARN=$(aws ecs list-tasks --cluster ${{ vars.ECS_CLUSTER }} --service-name ${{ vars.ECS_SERVICE }} --query 'taskArns[0]' --output text)
+          IMAGE=$(aws ecs describe-tasks --cluster ${{ vars.ECS_CLUSTER }} --tasks $TASK_ARN --query 'tasks[0].containers[0].image' --output text)
+          echo "Deployed image: $IMAGE"
+          if [[ "$IMAGE" != *"$IMAGE_TAG" ]]; then
+            echo "Image tag mismatch!" && exit 1
+          fi

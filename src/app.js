@@ -16,7 +16,7 @@ const express = require('express');
 
      // Route mẫu
      app.get('/', (req, res) => {
-       res.json({ message: 'Hello from Node.js backend on AWS ECS!Image taggg' });
+       res.json({ message: 'Hello from Node.js backend on AWS ECS!Image taggg: v1.0.11' });
      });
 
      const port = process.env.PORT || 8080;

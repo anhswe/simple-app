@@ -16,16 +16,7 @@ This project demonstrates how to set up a **CI/CD pipeline** using **GitHub Acti
 
 ## 🗂 Project Structure
 
-
-├── .github/
-│ └── workflows/
-│ ├── deploy-staging.yml
-│ └── deploy-production.yml
-├── Dockerfile
-├── package.json
-├── server.js
-├── taskdef.json
-└── README.md
+![img.png](img.png)
 
 
 ---

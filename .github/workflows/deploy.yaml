@@ -33,17 +33,6 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Get current Task Definition
-        id: get-task-def
-        run: |
-          set -e
-          echo "Retrieving Task Definition: ${{ env.ECS_TASK_DEFINITION }}"
-          aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} --region ${{ env.AWS_REGION }} --query taskDefinition --output json > task-definition.json
-          if [ ! -f task-definition.json ] || [ ! -s task-definition.json ]; then
-          echo "Error: Failed to create task-definition.json or file is empty"
-          exit 1
-          fi
-          cat task-definition.json
       - name: Update Task Definition with new image
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1

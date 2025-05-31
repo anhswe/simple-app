@@ -40,7 +40,7 @@ jobs:
         run: |
           set -e
           echo "Retrieving Task Definition: $ECS_TASK_DEFINITION"
-          aws ecs describe-task-definition --task-definition $ECS_TASK_DEFINITION --region ${{ vars.AWS_REGION }} --query taskDefinition --output json > task-definition.json
+          aws ecs describe-task-definition --task-definition ${{ vars.ECS_TASK_DEFINITION }} --region ${{ vars.AWS_REGION }} --query taskDefinition --output json > task-definition.json
           if [ ! -f task-definition.json ] || [ ! -s task-definition.json ]; then
             echo "Error: Failed to create task-definition.json or file is empty"
             exit 1

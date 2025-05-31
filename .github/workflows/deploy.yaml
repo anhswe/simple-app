@@ -36,10 +36,10 @@ jobs:
       - name: Get current Task Definition
         id: get-task-def
         run: |
-          aws ecs describe-task-definition \
-          --task-definition ${{ env.ECS_TASK_DEFINITION }} \
-          --region ${{ env.AWS_REGION }} \
-          --query taskDefinition \
+          aws ecs describe-task-definition
+          --task-definition ${{ env.ECS_TASK_DEFINITION }}
+          --region ${{ env.AWS_REGION }}
+          --query taskDefinition
           > task-definition.json
           echo "Retrieved Task Definition for ${{ env.ECS_TASK_DEFINITION }}"
 

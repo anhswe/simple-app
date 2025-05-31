@@ -37,7 +37,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
-          IMAGE_TAG: latest
+          IMAGE_TAG: ${{ github.ref_name }} # Sử dụng tên tag (e.g., v1.0.0)
         run: |
           aws ecs update-service \
             --cluster ${{ vars.ECS_CLUSTER }} \

@@ -28,10 +28,24 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
-          IMAGE_TAG: ${{ github.ref_name }} # Sử dụng tên tag (e.g., v1.0.0)
+          IMAGE_TAG: ${{ github.ref_name }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Get current Task Definition
+        id: get-task-def
+        env:
+          ECS_TASK_DEFINITION: ${{ vars.ECS_TASK_DEFINITION }} # Define this variable
+        run: |
+          set -e
+          echo "Retrieving Task Definition: $ECS_TASK_DEFINITION"
+          aws ecs describe-task-definition --task-definition $ECS_TASK_DEFINITION --region ${{ vars.AWS_REGION }} --query taskDefinition --output json > task-definition.json
+          if [ ! -f task-definition.json ] || [ ! -s task-definition.json ]; then
+            echo "Error: Failed to create task-definition.json or file is empty"
+            exit 1
+          fi
+          cat task-definition.json
 
       - name: Update Task Definition with new image
         id: task-def

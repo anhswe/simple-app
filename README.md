@@ -113,6 +113,7 @@ CMD ["node", "server.js"]
 
 ⚙️ GitHub Actions Workflows
 .github/workflows/deploy-staging.yml
+```
 name: Deploy to Staging
 
 on:
@@ -167,17 +168,18 @@ jobs:
             --cluster ${{ secrets.ECS_CLUSTER_NAME }} \
             --service simple-app-staging \
             --task-definition $TASK_DEF_ARN
+```
 .github/workflows/deploy-production.yml
 Same as staging, but with:
-
+```
 Tag: 'prod-*'
 
 Secrets: MONGO_URI_PRODUCTION
 
 Service name: simple-app-production
-
+```
 🚀 Trigger Deployments via Git Tags
-
+```
 To deploy to staging:
 
 git tag staging-1.0.0
@@ -186,8 +188,9 @@ To deploy to production:
 
 git tag prod-1.0.0
 git push origin prod-1.0.0
-
+```
 🧪 Local Testing
+```
 Build and run the Docker image locally:
 
 docker build -t simple-app .
@@ -201,8 +204,11 @@ ECS Fargate automatically pulls new image versions
 Rollback by re-tagging previous version
 
 ECS autoscaling recommended for high availability
+```
 📚 Resources
+```
 Amazon ECS Docs
 https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html
 GitHub Actions for AWS
 https://github.com/aws-actions
+```
